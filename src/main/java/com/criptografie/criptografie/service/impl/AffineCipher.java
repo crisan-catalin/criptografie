@@ -1,7 +1,10 @@
 package com.criptografie.criptografie.service.impl;
 
+import org.springframework.stereotype.Service;
+
 import static com.criptografie.criptografie.Constants.*;
 
+@Service
 public class AffineCipher {
 
     private static int keyA;

@@ -1,5 +1,8 @@
 package com.criptografie.criptografie.service.impl;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class VernamCipher {
 
     private static int[][] keyAsBitsMatrix;

@@ -1,11 +1,13 @@
 package com.criptografie.criptografie.service.impl;
 
 import com.criptografie.criptografie.Constants;
+import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
 import static com.criptografie.criptografie.Constants.*;
 
+@Service
 public class RsaCipher {
 
     private long p;
@@ -19,6 +21,10 @@ public class RsaCipher {
 
     public RsaCipher() {
         random = new Random();
+    }
+
+    public boolean isValid(String text) {
+        return text.length() >= 4;
     }
 
     public String encrypt(String plainText) {
@@ -87,14 +93,14 @@ public class RsaCipher {
     }
 
     private long randomNumber(long a, long b) {
-        return (long) ((random.nextInt() & Integer.MAX_VALUE) % b + a);
+        return (random.nextInt() & Integer.MAX_VALUE) % b + a;
     }
 
     private long randomPrimeNumber(long a, long b) {
         int iterations = 20;
         long number;
         do {
-            number = (long) (((random.nextInt() & Integer.MAX_VALUE)) % b + a);
+            number = ((random.nextInt() & Integer.MAX_VALUE)) % b + a;
             if (fermat(number, iterations)) {
                 return number;
             }

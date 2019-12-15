@@ -1,14 +1,28 @@
 package com.criptografie.criptografie.service.impl;
 
 import com.criptografie.criptografie.Constants;
+import org.springframework.stereotype.Service;
+
+import java.util.stream.Stream;
 
 import static com.criptografie.criptografie.Constants.*;
 
+@Service
 public class VigenereCipher {
 
     private static final int CHARACTER_SPACE = 32;
     private static String key;
     private static char[][] table;
+
+    public boolean isValidKey(String key) {
+        char[] charArr = key.toCharArray();
+        for (char ch : charArr) {
+            if (Character.isDigit(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public String encrypt(String plainText, final String key) {
         initializeContext(key);

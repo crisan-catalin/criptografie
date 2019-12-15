@@ -1,8 +1,11 @@
 package com.criptografie.criptografie.service.impl;
 
+import org.springframework.stereotype.Service;
+
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+@Service
 public class TranspositionCipher {
 
     private int key[];
