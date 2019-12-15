@@ -15,8 +15,8 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="encryptedFile">Load an encrypted file</label>
-                <input type="file" class="form-control-file" id="encryptedFile">
+                <label for="encryptedFile">Load an encrypted file (optional)</label>
+                <input type="file" class="form-control-file" id="encryptedFile" accept=".txt">
             </div>
         </div>
 
@@ -30,14 +30,14 @@
         <div class="col-sm-12 col-md-4 col-lg-3 d-flex flex-column justify-content-around">
             <div class="form-group">
                 <label for="keyA">Key (A)</label>
-                <input type="email" class="form-control" id="keyA" aria-describedby="errorKeyA">
+                <input type="text" class="form-control" id="keyA" aria-describedby="errorKeyA">
                 <small id="errorKeyA" class="form-text text-danger invisible">Invalid key.</small>
             </div>
         </div>
         <div class="col-sm-12 col-md-4 col-lg-3 d-flex flex-column justify-content-around">
             <div class="form-group">
                 <label for="keyB">Key (B)</label>
-                <input type="email" class="form-control" id="keyB" aria-describedby="errorKeyB">
+                <input type="text" class="form-control" id="keyB" aria-describedby="errorKeyB">
                 <small id="errorKeyB" class="form-text text-danger invisible">Invalid key.</small>
             </div>
         </div>

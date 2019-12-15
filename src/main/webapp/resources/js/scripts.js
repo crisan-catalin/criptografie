@@ -53,6 +53,15 @@ $('#cipher').change(function () {
     }
 });
 
+$('#encryptedFile').change(function () {
+    var fileReader = new FileReader();
+    fileReader.onload = function (e) {
+        var data = e.target.result;
+        $('#decryptedText').val(data);
+    };
+    fileReader.readAsText($('#encryptedFile').prop('files')[0]);
+});
+
 $('.js-submit-encrypt').on('submit', function (e) {
     e.preventDefault();
 
