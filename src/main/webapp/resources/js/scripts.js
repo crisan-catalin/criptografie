@@ -62,6 +62,38 @@ $('#encryptedFile').change(function () {
     fileReader.readAsText($('#encryptedFile').prop('files')[0]);
 });
 
+$('.js-submit-decrypt').on('click', function (e) {
+    e.preventDefault();
+
+    const text = $('#encryptedText').val();
+    const cipherId = $('#cipher').val();
+    const data = {
+        cipherId: cipherId,
+        text: text
+    };
+
+    //Hill
+    if (cipherId == 2) {
+        //TODO
+        alert("Not implemented");
+        return;
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "/decrypt",
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        success: function (response) {
+            $('#decryptedText').val(response);
+
+        },
+        error: function (response) {
+            alert(response.responseText);
+        }
+    });
+});
+
 $('.js-submit-encrypt').on('click', function (e) {
     e.preventDefault();
 
@@ -85,6 +117,7 @@ $('.js-submit-encrypt').on('click', function (e) {
     else if (cipherId == 2) {
         //TODO
         alert("Not implemented");
+        return;
     }
     //RSA
     else if (cipherId == 3) {

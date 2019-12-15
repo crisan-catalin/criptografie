@@ -15,7 +15,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="encryptedFile">Load an encrypted file (optional)</label>
+                <label for="encryptedFile">Load a file to encrypt (optional)</label>
                 <input type="file" class="form-control-file" id="encryptedFile" accept=".txt">
             </div>
         </div>
