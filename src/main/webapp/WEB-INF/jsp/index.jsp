@@ -21,8 +21,8 @@
         </div>
 
         <div class="col-sm-12 col-md-4 col-lg-3 d-flex flex-column justify-content-around">
-            <button type="submit" class="btn btn-block btn-success">Encrypt</button>
-            <button type="submit" class="btn btn-block btn-warning">Decrypt</button>
+            <button class="btn btn-block btn-success js-submit-encrypt">Encrypt</button>
+            <button class="btn btn-block btn-warning js-submit-decrypt">Decrypt</button>
         </div>
     </div>
 

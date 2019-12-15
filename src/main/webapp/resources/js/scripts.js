@@ -62,28 +62,57 @@ $('#encryptedFile').change(function () {
     fileReader.readAsText($('#encryptedFile').prop('files')[0]);
 });
 
-$('.js-submit-encrypt').on('submit', function (e) {
+$('.js-submit-encrypt').on('click', function (e) {
     e.preventDefault();
 
     const text = $('#decryptedText').val();
     const cipherId = $('#cipher').val();
-    const data = {};
+    const data = {
+        cipherId: cipherId,
+        text: text
+    };
+
+    //Affine
+    if (cipherId == 0) {
+        data["keyA"] = $('#keyA').val();
+        data["keyB"] = $('#keyB').val();
+    }
+    //Caesar
+    else if (cipherId == 1) {
+        data["keyA"] = $('#keyA').val();
+    }
+    //Hill
+    else if (cipherId == 2) {
+        //TODO
+        alert("Not implemented");
+    }
+    //RSA
+    else if (cipherId == 3) {
+        //nothing to do
+    } //Transposition
+    else if (cipherId == 4) {
+        data["keyA"] = $('#keyA').val();
+    }
+    //Vernam
+    else if (cipherId == 5) {
+        data["keyA"] = $('#keyA').val();
+    }
+    //Vigenere
+    else if (cipherId == 6) {
+        data["keyA"] = $('#keyA').val();
+    }
 
     $.ajax({
         type: "POST",
         url: "/encrypt",
-        data: JSON.stringify({
-            cipherId: cipherId,
-            text: text,
-            offset: 2
-        }),
+        data: JSON.stringify(data),
         contentType: "application/json",
         success: function (response) {
             $('#encryptedText').val(response);
 
         },
         error: function (response) {
-            console.log(response);
+            alert(response.responseText);
         }
     });
 });
