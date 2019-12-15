@@ -98,8 +98,38 @@ public class HomeController {
         return ResponseEntity.ok(encryptedText);
     }
 
-    @PostMapping("/decrypt")
-    public void decrypt() {
+    @PostMapping(value = "/decrypt", consumes = {"application/json"})
+    public ResponseEntity<String> decrypt(@RequestBody HashMap<String, String> body) {
+        int cipherId = Integer.valueOf(body.get("cipherId"));
+        String text = body.get("text");
+        boolean isValidCipher = Arrays.stream(Ciphers.values()).map(Ciphers::getId).anyMatch(id -> id.equals(cipherId));
 
+        if (!isValidCipher) {
+            return ResponseEntity.badRequest().body("Cipher not found.");
+        }
+
+        String decryptedText = null;
+        if (cipherId == Ciphers.Affine.getId()) {
+            decryptedText = affineCipher.decrypt(text);
+        } else if (cipherId == Ciphers.Caesar.getId()) {
+            decryptedText = caesarCipher.decrypt(text);
+        } else if (cipherId == Ciphers.Hill.getId()) {
+            //TODO
+            return ResponseEntity.badRequest().body("Cipher not implemented.");
+        } else if (cipherId == Ciphers.RSA.getId()) {
+            decryptedText = rsaCipher.decrypt(text);
+        } else if (cipherId == Ciphers.Transposition.getId()) {
+            decryptedText = transpositionCipher.decrypt(text);
+        } else if (cipherId == Ciphers.Vernam.getId()) {
+            decryptedText = vernamCipher.decrypt(text);
+        } else if (cipherId == Ciphers.Vigenere.getId()) {
+            decryptedText = vigenereCipher.decrypt(text);
+        }
+
+        if (decryptedText == null || decryptedText.isEmpty()) {
+            return ResponseEntity.badRequest().body("Something was wrong.");
+        }
+
+        return ResponseEntity.ok(decryptedText);
     }
 }
