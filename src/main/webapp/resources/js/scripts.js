@@ -21,8 +21,10 @@ $('#cipher').change(function () {
     }
     //Hill
     else if (cipherId == 2) {
-        //TODO
-        alert("Not implemented");
+        $keyA.prop("required", true);
+        $keyB.prop("required", true);
+        $keyAContainer.removeClass("invisible");
+        $keyBContainer.removeClass("invisible");
     }
     //RSA
     else if (cipherId == 3) {
@@ -84,9 +86,8 @@ $('.js-submit-decrypt').on('click', function (e) {
     }
     //Hill
     else if (cipherId == 2) {
-        //TODO
-        alert("Not implemented");
-        return;
+        data["keyA"] = $('#keyA').val();
+        data["keyB"] = $('#keyB').val();
     }
     //RSA
     else if (cipherId == 3) {
@@ -141,9 +142,8 @@ $('.js-submit-encrypt').on('click', function (e) {
     }
     //Hill
     else if (cipherId == 2) {
-        //TODO
-        alert("Not implemented");
-        return;
+        data["keyA"] = $('#keyA').val();
+        data["keyB"] = $('#keyB').val();
     }
     //RSA
     else if (cipherId == 3) {

@@ -3,86 +3,88 @@ package com.criptografie.criptografie.service.impl;
 import com.criptografie.criptografie.Constants;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-
 @Service
 public class HillCipher {
 
-    private static final int MATRIX_GRADE = 2;
-    private int[][] matrix;
-    private int[] vector;
+    private static int MATRIX_GRADE = 2;
 
-    public boolean validate(int[][] matrix, int[] vector) {
-        return validateVector(vector) && validateMatrix(matrix);
+    public boolean validateVector(int[] vector, int matrixRank) {
+        return vector.length == matrixRank;
     }
 
-    public String encrypt(String plainText, int[][] matrix, int[] vector) {
-        this.matrix = matrix;
-        this.vector = vector;
+    public boolean validateMatrix(int[][] matrix) {
+        int determinant = matrixDeterminant(matrix, matrix.length);
+        return determinant > 0 || cmmdc(determinant, Constants.ALPHABET_LENGTH) == 1;
+    }
 
-        String cleanText = plainText.toUpperCase().trim();
-        StringBuilder copy = new StringBuilder(cleanText.length());
+    public String encrypt(String a, int[][] matrix, int[] vector) {
+        MATRIX_GRADE = matrix.length;
+        String cleanText = a.toUpperCase().replace(" ", "").trim();
+        StringBuilder encryptedText = new StringBuilder(cleanText);
+        int encryptedTextIndex = 0;
         int[] aux = new int[MATRIX_GRADE];
         int k = 0;
 
-        for (int i = 0; i < matrix.length; i++) {
+        for (int i = 0; i < cleanText.length(); i++) {
             aux[k++] = (cleanText.charAt(i) - 'A');
             if ((i + 1) % MATRIX_GRADE == 0) {
                 matrixMultiplication(matrix, aux);
-                adunareVector(vector, aux);
-                modulVector(aux);
+                vectorAddition(vector, aux);
+                vectorModule(aux);
 
                 for (int j = 0; j < k; j++) {
-                    copy.append(aux[j] + 'A');
-                }
-                k = 0;
-            } else {
-                int catSaCompensez = MATRIX_GRADE - (cleanText.length() % MATRIX_GRADE);
-                copy.setLength(cleanText.length() + catSaCompensez);
-                while (catSaCompensez > 0) {
-                    aux[k++] = ('Q' - 'A');
-                    catSaCompensez--;
-                }
-                matrixMultiplication(matrix, aux);
-                adunareVector(vector, aux);
-                modulVector(aux);
-
-                for (int j = 0; j < k; j++) {
-                    copy.append(aux[j] + 'A');
+                    encryptedText.setCharAt(encryptedTextIndex++, ((char) (aux[j] + 'A')));
                 }
                 k = 0;
             }
         }
+        if (cleanText.length() % MATRIX_GRADE != 0) {
+            int extraCharsToFill = MATRIX_GRADE - (cleanText.length() % MATRIX_GRADE);
+            encryptedText.setLength(cleanText.length() + extraCharsToFill);
+            while (extraCharsToFill > 0) {
+                aux[k++] = ('Q' - 'A');
+                extraCharsToFill--;
+            }
+            matrixMultiplication(matrix, aux);
+            vectorAddition(vector, aux);
+            vectorModule(aux);
 
-        return copy.toString();
+            for (int j = 0; j < k; j++) {
+                encryptedText.setCharAt(encryptedTextIndex++, ((char) (aux[j] + 'A')));
+            }
+        }
+        return encryptedText.toString();
     }
 
-    public String decrypt(String encryptedText) throws Exception {
-        StringBuilder copy = new StringBuilder(encryptedText.length());
-        int[][] inverseMatrix = inverseMatrix(this.matrix);
+    public String decrypt(String encryptedText, int[][] matrix, int[] vector) throws Exception {
+        int[][] inverseMatrix = inverseMatrix(matrix);
+        StringBuilder decryptedText = new StringBuilder(encryptedText);
+        int decryptedTextIndex = 0;
         int[] aux = new int[MATRIX_GRADE];
         int k = 0;
 
         for (int i = 0; i < encryptedText.length(); i++) {
             aux[k++] = (encryptedText.charAt(i) - 'A');
             if ((i + 1) % MATRIX_GRADE == 0) {
-                scadereVector(vector, aux);
+                vectorSubsctraction(vector, aux);
                 matrixMultiplication(inverseMatrix, aux);
-                modulVector(aux);
+                vectorModule(aux);
 
                 for (int j = 0; j < k; j++) {
-                    copy.append(aux[j] + 'A');
+                    decryptedText.setCharAt(decryptedTextIndex++, (char) (aux[j] + 'A'));
                 }
                 k = 0;
             }
         }
 
-        return null;
+        //TODO: implement removal of fill characters
+
+        return decryptedText.toString();
     }
 
     private int[][] inverseMatrix(int[][] matrix) throws Exception {
-        // Find determinant of A[][]
-        int det = determinant(matrix, matrix.length);
+        // Find matrixDeterminant of A[][]
+        int det = matrixDeterminant(matrix, matrix.length);
         if (det == 0) {
             throw new Exception("Singular matrix, can't find its inverse");
         }
@@ -121,7 +123,7 @@ public class HillCipher {
 
                 // Interchanging rows and columns to get the
                 // transpose of the cofactor matrix
-                adj[j][i] = (sign) * (determinant(temp, matrix.length - 1));
+                adj[j][i] = (sign) * (matrixDeterminant(temp, matrix.length - 1));
             }
         }
         return adj;
@@ -131,8 +133,8 @@ public class HillCipher {
         int[] aux = new int[MATRIX_GRADE];
         for (int i = 0; i < MATRIX_GRADE; i++) {
             aux[i] = 0;
-            for (int k = 0; k < MATRIX_GRADE; k++) {
-                aux[i] += matrix[i][k] * a[k];
+            for (int j = 0; j < MATRIX_GRADE; j++) {
+                aux[i] += matrix[i][j] * a[j];
             }
         }
         for (int i = 0; i < MATRIX_GRADE; i++) {
@@ -140,47 +142,25 @@ public class HillCipher {
         }
     }
 
-
-    private void modulVector(int[] aux) {
+    private void vectorModule(int[] aux) {
         for (int i = 0; i < MATRIX_GRADE; i++) {
             aux[i] = ((aux[i] % Constants.ALPHABET_LENGTH) + Constants.ALPHABET_LENGTH) % Constants.ALPHABET_LENGTH;
         }
     }
 
-    private void adunareVector(int[] vector, int[] aux) {
+    private void vectorAddition(int[] vector, int[] aux) {
         for (int i = 0; i < MATRIX_GRADE; i++) {
             aux[i] += vector[i];
         }
     }
 
-    private void scadereVector(int[] vector, int[] aux) {
+    private void vectorSubsctraction(int[] vector, int[] aux) {
         for (int i = 0; i < MATRIX_GRADE; i++) {
             aux[i] -= vector[i];
         }
     }
 
-    private boolean validateVector(int[] vector) {
-        return vector.length == MATRIX_GRADE;
-    }
-
-    private boolean validateMatrix(int[][] matrix) {
-        int determinant = determinant(matrix, matrix.length);
-        return determinant > 0 || cmmdc(determinant, Constants.ALPHABET_LENGTH) == 1;
-    }
-
-    private int[][] transpose(int[][] matrix) {
-        int[][] transposeMatrix = Arrays.copyOf(matrix, matrix.length);
-        for (int i = 0; i < matrix.length; i++)
-            for (int j = 0; j < matrix.length; j++)
-                transposeMatrix[i][j] = matrix[j][i];
-        return transposeMatrix;
-    }
-
-    private int cmmdc(int n1, int n2) {
-        return n2 == 0 ? n1 : cmmdc(n2, n1 % n2);
-    }
-
-    private int determinant(int[][] matrix, int n) {
+    private int matrixDeterminant(int[][] matrix, int n) {
         int result = 0; // Initialize result
 
         if (n == 1)
@@ -196,7 +176,7 @@ public class HillCipher {
         for (int j = 0; j < n; j++) {
             // Getting Cofactor of mat[0][f]
             getCofactor(matrix, temp, 0, j, n);
-            result += sign * matrix[0][j] * determinant(temp, n - 1);
+            result += sign * matrix[0][j] * matrixDeterminant(temp, n - 1);
 
             // terms are to be added with
             // alternate sign
@@ -232,4 +212,7 @@ public class HillCipher {
         }
     }
 
+    private int cmmdc(int n1, int n2) {
+        return n2 == 0 ? n1 : cmmdc(n2, n1 % n2);
+    }
 }

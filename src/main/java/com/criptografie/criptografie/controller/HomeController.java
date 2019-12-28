@@ -41,6 +41,9 @@ public class HomeController {
     @Autowired
     private VigenereCipher vigenereCipher;
 
+    @Autowired
+    private MathUtils mathUtils;
+
     @GetMapping("/")
     public String getPage(Model model) {
         model.addAttribute(CIPHER_LIST_ATTR, Ciphers.values());
@@ -78,8 +81,26 @@ public class HomeController {
             int keyA_int = Integer.parseInt(keyA);
             encryptedText = caesarCipher.encrypt(text, keyA_int);
         } else if (cipherId == Ciphers.Hill.getId()) {
-            //TODO
-            return ResponseEntity.badRequest().body("Cipher not implemented.");
+            int[] matrixElements = mathUtils.stringToVector(keyA);
+            double matrixRank = Math.sqrt(matrixElements.length);
+            if (matrixRank != (int) matrixRank) {
+                return ResponseEntity.badRequest().body("Matrix must be squared.");
+            }
+            int[][] matrix = mathUtils.vectorToMatrix(matrixElements, (int) matrixRank);
+            if (!hillCipher.validateMatrix(matrix)) {
+                return ResponseEntity.badRequest().body("Matrix determinant should be prime and greater than zero.");
+            }
+
+            int[] vectorElements = mathUtils.stringToVector(keyB);
+            if (!hillCipher.validateVector(vectorElements, (int) matrixRank)) {
+                return ResponseEntity.badRequest().body("Number of vector elements should be equal with the rank of the matrix.");
+            }
+
+            try {
+                encryptedText = hillCipher.encrypt(text, matrix, vectorElements);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body("Matrix determinant should be greater than zero.");
+            }
         } else if (cipherId == Ciphers.RSA.getId()) {
             if (!NumberUtils.isCreatable(keyA) || !NumberUtils.isCreatable(keyB)) {
                 return ResponseEntity.badRequest().body("Key A and Key B must be numbers.");
@@ -143,8 +164,26 @@ public class HomeController {
             int keyA_int = Integer.parseInt(keyA);
             decryptedText = caesarCipher.decrypt(text, keyA_int);
         } else if (cipherId == Ciphers.Hill.getId()) {
-            //TODO
-            return ResponseEntity.badRequest().body("Cipher not implemented.");
+            int[] matrixElements = mathUtils.stringToVector(keyA);
+            double matrixRank = Math.sqrt(matrixElements.length);
+            if (matrixRank != (int) matrixRank) {
+                return ResponseEntity.badRequest().body("Matrix must be squared.");
+            }
+            int[][] matrix = mathUtils.vectorToMatrix(matrixElements, (int) matrixRank);
+            if (!hillCipher.validateMatrix(matrix)) {
+                return ResponseEntity.badRequest().body("Matrix determinant should be prime and greater than zero.");
+            }
+
+            int[] vectorElements = mathUtils.stringToVector(keyB);
+            if (!hillCipher.validateVector(vectorElements, (int) matrixRank)) {
+                return ResponseEntity.badRequest().body("Number of vector elements should be equal with the rank of the matrix.");
+            }
+
+            try {
+                decryptedText = hillCipher.decrypt(text, matrix, vectorElements);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body("Matrix determinant should be greater than zero.");
+            }
         } else if (cipherId == Ciphers.RSA.getId()) {
             if (!NumberUtils.isCreatable(keyA) || !NumberUtils.isCreatable(keyB)) {
                 return ResponseEntity.badRequest().body("Key A and Key B must be numbers.");
