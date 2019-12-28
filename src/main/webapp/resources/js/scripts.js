@@ -65,114 +65,116 @@ $('#file').change(function () {
     fileReader.readAsText($('#file').prop('files')[0]);
 });
 
-$('.js-submit-decrypt').on('click', function (e) {
-    e.preventDefault();
+function beforeSubmit() {
+    $('.js-submit-decrypt').on('click', function (e) {
+        e.preventDefault();
 
-    const text = $('#encryptedText').val();
-    const cipherId = $('#cipher').val();
-    const data = {
-        cipherId: cipherId,
-        text: text
-    };
+        const text = $('#encryptedText').val();
+        const cipherId = $('#cipher').val();
+        const data = {
+            cipherId: cipherId,
+            text: text
+        };
 
-    //Affine
-    if (cipherId == 0) {
-        data["keyA"] = $('#keyA').val();
-        data["keyB"] = $('#keyB').val();
-    }
-    //Caesar
-    else if (cipherId == 1) {
-        data["keyA"] = $('#keyA').val();
-    }
-    //Hill
-    else if (cipherId == 2) {
-        data["keyA"] = $('#keyA').val();
-        data["keyB"] = $('#keyB').val();
-    }
-    //RSA
-    else if (cipherId == 3) {
-        data["keyA"] = $('#keyA').val();
-        data["keyB"] = $('#keyB').val();
-    } //Transposition
-    else if (cipherId == 4) {
-        data["keyA"] = $('#keyA').val();
-    }
-    //Vernam
-    else if (cipherId == 5) {
-        data["keyA"] = $('#keyA').val();
-    }
-    //Vigenere
-    else if (cipherId == 6) {
-        data["keyA"] = $('#keyA').val();
-    }
-
-    $.ajax({
-        type: "POST",
-        url: "/decrypt",
-        data: JSON.stringify(data),
-        contentType: "application/json",
-        success: function (response) {
-            $('#decryptedText').val(response);
-
-        },
-        error: function (response) {
-            alert(response.responseText);
+        //Affine
+        if (cipherId == 0) {
+            data["keyA"] = $('#keyA').val();
+            data["keyB"] = $('#keyB').val();
         }
-    });
-});
-
-$('.js-submit-encrypt').on('click', function (e) {
-    e.preventDefault();
-
-    const text = $('#decryptedText').val();
-    const cipherId = $('#cipher').val();
-    const data = {
-        cipherId: cipherId,
-        text: text
-    };
-
-    //Affine
-    if (cipherId == 0) {
-        data["keyA"] = $('#keyA').val();
-        data["keyB"] = $('#keyB').val();
-    }
-    //Caesar
-    else if (cipherId == 1) {
-        data["keyA"] = $('#keyA').val();
-    }
-    //Hill
-    else if (cipherId == 2) {
-        data["keyA"] = $('#keyA').val();
-        data["keyB"] = $('#keyB').val();
-    }
-    //RSA
-    else if (cipherId == 3) {
-        data["keyA"] = $('#keyA').val();
-        data["keyB"] = $('#keyB').val();
-    } //Transposition
-    else if (cipherId == 4) {
-        data["keyA"] = $('#keyA').val();
-    }
-    //Vernam
-    else if (cipherId == 5) {
-        data["keyA"] = $('#keyA').val();
-    }
-    //Vigenere
-    else if (cipherId == 6) {
-        data["keyA"] = $('#keyA').val();
-    }
-
-    $.ajax({
-        type: "POST",
-        url: "/encrypt",
-        data: JSON.stringify(data),
-        contentType: "application/json",
-        success: function (response) {
-            $('#encryptedText').val(response);
-
-        },
-        error: function (response) {
-            alert(response.responseText);
+        //Caesar
+        else if (cipherId == 1) {
+            data["keyA"] = $('#keyA').val();
         }
+        //Hill
+        else if (cipherId == 2) {
+            data["keyA"] = $('#keyA').val();
+            data["keyB"] = $('#keyB').val();
+        }
+        //RSA
+        else if (cipherId == 3) {
+            data["keyA"] = $('#keyA').val();
+            data["keyB"] = $('#keyB').val();
+        } //Transposition
+        else if (cipherId == 4) {
+            data["keyA"] = $('#keyA').val();
+        }
+        //Vernam
+        else if (cipherId == 5) {
+            data["keyA"] = $('#keyA').val();
+        }
+        //Vigenere
+        else if (cipherId == 6) {
+            data["keyA"] = $('#keyA').val();
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/decrypt",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success: function (response) {
+                $('#decryptedText').val(response);
+
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
     });
-});
+
+    $('.js-submit-encrypt').on('click', function (e) {
+        e.preventDefault();
+
+        const text = $('#decryptedText').val();
+        const cipherId = $('#cipher').val();
+        const data = {
+            cipherId: cipherId,
+            text: text
+        };
+
+        //Affine
+        if (cipherId == 0) {
+            data["keyA"] = $('#keyA').val();
+            data["keyB"] = $('#keyB').val();
+        }
+        //Caesar
+        else if (cipherId == 1) {
+            data["keyA"] = $('#keyA').val();
+        }
+        //Hill
+        else if (cipherId == 2) {
+            data["keyA"] = $('#keyA').val();
+            data["keyB"] = $('#keyB').val();
+        }
+        //RSA
+        else if (cipherId == 3) {
+            data["keyA"] = $('#keyA').val();
+            data["keyB"] = $('#keyB').val();
+        } //Transposition
+        else if (cipherId == 4) {
+            data["keyA"] = $('#keyA').val();
+        }
+        //Vernam
+        else if (cipherId == 5) {
+            data["keyA"] = $('#keyA').val();
+        }
+        //Vigenere
+        else if (cipherId == 6) {
+            data["keyA"] = $('#keyA').val();
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "/encrypt",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success: function (response) {
+                $('#encryptedText').val(response);
+
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    });
+}
