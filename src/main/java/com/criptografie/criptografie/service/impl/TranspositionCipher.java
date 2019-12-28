@@ -15,7 +15,7 @@ public class TranspositionCipher {
         return Stream.of(key.toCharArray()).distinct().count() == key.length();
     }
 
-    public String encrypt(String plainText, final String key) {
+    public String encrypt(String plainText, String key) {
         prepareKey(key);
 
         StringBuilder copy = new StringBuilder(plainText);
@@ -44,18 +44,21 @@ public class TranspositionCipher {
         return copy.toString();
     }
 
-    public String decrypt(String encryptedText) {
-        int maxtrixRows = encryptedText.length() / key.length;
-        char[][] encryptedTextMatrix = new char[maxtrixRows][key.length];
-        char[][] decryptedTextMatrix = new char[maxtrixRows][key.length];
+    public String decrypt(String encryptedText, String key) {
+        prepareKey(key);
+
+        int maxtrixRows = encryptedText.length() / key.length();
+        char[][] encryptedTextMatrix = new char[maxtrixRows][key.length()];
+        char[][] decryptedTextMatrix = new char[maxtrixRows][key.length()];
 
         int encryptedTextIndex = 0;
-        for (int i = 0; i < key.length; i++) {
+        for (int i = 0; i < key.length(); i++) {
             for (int j = 0; j < maxtrixRows; j++) {
                 encryptedTextMatrix[j][i] = encryptedText.charAt(encryptedTextIndex++);
             }
         }
 
+        sortKey();
         for (int i = 0; i < keyAndSortedKeyMapping.length; i++) {
             for (int j = 0; j < maxtrixRows; j++) {
                 decryptedTextMatrix[j][i] = encryptedTextMatrix[j][keyAndSortedKeyMapping[i]];
@@ -64,7 +67,7 @@ public class TranspositionCipher {
 
         StringBuilder copy = new StringBuilder(encryptedText.length());
         for (int i = 0; i < maxtrixRows; i++) {
-            for (int j = 0; j < key.length; j++) {
+            for (int j = 0; j < key.length(); j++) {
                 copy.append(decryptedTextMatrix[i][j]);
             }
         }

@@ -24,7 +24,7 @@ public class VigenereCipher {
         return true;
     }
 
-    public String encrypt(String plainText, final String key) {
+    public String encrypt(String plainText, String key) {
         initializeContext(key);
 
         StringBuilder copy = new StringBuilder(plainText.length());
@@ -47,9 +47,10 @@ public class VigenereCipher {
         return copy.toString();
     }
 
-    public String decrypt(String encryptedText) {
-        StringBuilder copy = new StringBuilder(encryptedText.length());
+    public String decrypt(String encryptedText, String key) {
+        initializeContext(key);
 
+        StringBuilder copy = new StringBuilder(encryptedText.length());
         for (int i = 0; i < encryptedText.length(); i++) {
             char charToDecrypt = encryptedText.charAt(i);
             if (charToDecrypt == CHARACTER_SPACE) {

@@ -3,42 +3,37 @@ package com.criptografie.criptografie.service.impl;
 import com.criptografie.criptografie.Constants;
 import org.springframework.stereotype.Service;
 
-import java.util.Random;
-
 import static com.criptografie.criptografie.Constants.*;
 
 @Service
 public class RsaCipher {
 
-    private long p;
-    private long q;
-    private long n;
-    private long phi;
-    private long e;
-    private long d;
+    private int p;
+    private int q;
+    private int n;
+    private int phi;
+    private int e;
+    private int d;
 
-    private Random random;
-
-    public RsaCipher() {
-        random = new Random();
+    public boolean isValid(int keyA, int keyB) {
+        return cmmdc(keyA, keyB) == 1;
     }
 
-    public boolean isValid(String text) {
-        return text.length() >= 4;
-    }
-
-    public String encrypt(String plainText) {
-        p = randomPrimeNumber(1, plainText.length() / 2);
-        q = randomPrimeNumber(1, plainText.length() - plainText.length() / 2);
+    public String encrypt(String plainText, int keyA, int keyB) {
+        p = keyA;
+        q = keyB;
         n = p * q;
         phi = (p - 1) * (q - 1);
-        e = 0;
+        e = 2;
         d = 0;
 
-        do {
-            e = randomNumber(1, phi);
-            d = inverseMultiplication((int) e, (int) phi);
-        } while (cmmdc(e, phi) != 1);
+        while (e < phi) {
+            if (cmmdc(e, phi) == 1) {
+                break;
+            }
+            e++;
+        }
+        d = inverseMultiplication(e, phi);
 
         StringBuilder copy = new StringBuilder(plainText.length());
         for (int i = 0; i < plainText.length(); i++) {
@@ -90,34 +85,6 @@ public class RsaCipher {
 
     private long cmmdc(long a, long b) {
         return b == 0 ? a : cmmdc(b, a % b);
-    }
-
-    private long randomNumber(long a, long b) {
-        return (random.nextInt() & Integer.MAX_VALUE) % b + a;
-    }
-
-    private long randomPrimeNumber(long a, long b) {
-        int iterations = 20;
-        long number;
-        do {
-            number = ((random.nextInt() & Integer.MAX_VALUE)) % b + a;
-            if (fermat(number, iterations)) {
-                return number;
-            }
-        } while (true);
-    }
-
-    private boolean fermat(long p, int iterations) {
-        if (p == 1)
-            return false;
-
-        for (int i = 0; i < iterations; i++) {
-            long a = (long) ((random.nextInt() & Integer.MAX_VALUE) % (p - 1) + 1);
-            if (modulo(a, p - 1, p) != 1) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private long modulo(long base, long exponent, long mod) {

@@ -13,7 +13,8 @@ public class VernamCipher {
     }
 
     public String encrypt(String plainText, String key) {
-        initializeContext(plainText, key);
+        keyAsBitsMatrix = stringToBitsMatrix(key);
+        plainTextAsBitsMatrix = stringToBitsMatrix(plainText);
 
         int[][] copy = new int[plainTextAsBitsMatrix.length][8];
         for (int i = 0; i < plainText.length(); i++) {
@@ -26,7 +27,9 @@ public class VernamCipher {
     }
 
 
-    public String decrypt(String encryptedText) {
+    public String decrypt(String encryptedText, String key) {
+        keyAsBitsMatrix = stringToBitsMatrix(key);
+
         int[][] cryptedTextAsBitsMatrix = stringToBitsMatrix(encryptedText);
         int[][] decryptedTextAsBitsMatrix = new int[cryptedTextAsBitsMatrix.length][8];
 
@@ -36,11 +39,6 @@ public class VernamCipher {
             }
         }
         return bitsMatrixToString(decryptedTextAsBitsMatrix);
-    }
-
-    private void initializeContext(String plainText, String key) {
-        keyAsBitsMatrix = stringToBitsMatrix(key);
-        plainTextAsBitsMatrix = stringToBitsMatrix(plainText);
     }
 
     private int[][] stringToBitsMatrix(String string) {

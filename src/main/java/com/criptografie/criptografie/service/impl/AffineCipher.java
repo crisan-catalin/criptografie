@@ -7,16 +7,11 @@ import static com.criptografie.criptografie.Constants.*;
 @Service
 public class AffineCipher {
 
-    private static int keyA;
-    private static int keyB;
-
     public boolean isValidKeyA(int keyA) {
         return isPrime(keyA, ALPHABET_LENGTH);
     }
 
     public String encrypt(String plainText, int keyA, int keyB) {
-        initializeContext(keyA, keyB);
-
         StringBuilder copy = new StringBuilder(plainText.length());
         for (int i = 0; i < plainText.length(); i++) {
             char charToEncrypt = plainText.charAt(i);
@@ -33,12 +28,7 @@ public class AffineCipher {
         return copy.toString();
     }
 
-    private void initializeContext(int keyA, int keyB) {
-        this.keyA = keyA;
-        this.keyB = keyB;
-    }
-
-    public String decrypt(String cryptedText) {
+    public String decrypt(String cryptedText, int keyA, int keyB) {
         int symmetricKey = findSymmetricKeyOf(keyA);
         StringBuilder copy = new StringBuilder(cryptedText.length());
 
